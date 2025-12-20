@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Week 6 Project 2</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        async function signup(){
+            const username1 = document.getElementById('username1').value;
+            const password1 = document.getElementById('password1').value;
+            await axios.post("http://localhost:3000/signup",{
+                username:username1,
+                password:password1
+            })
+            alert("signup successful");
+        }
+        async function signin(){
+            const username2 = document.getElementById('username2').value;
+            const password2 = document.getElementById('password2').value;
+            const res = await axios.post("http://localhost:3000/signin",{
+                username:username2,
+                password:password2
+            })
+            localStorage.setItem("token",res.data.token);
+            alert("signin successful");
+            getinfo();
+        }
+        async function getinfo(){
+            const token = localStorage.getItem("token");
+            const res = await axios.get("http://localhost:3000/me",{
+                headers:{
+                    authorization: localStorage.getItem("token")
+                }
+            });
+            document.getElementById("information").innerText=JSON.stringify(res.data);
+        }
+        async function logout(){
+            localStorage.removeItem("token");
+            document.getElementById("information").innerText = "";
+            alert("logout successful");
+        }
+    </script>
+    <body>
+        <label for="signup">signup</label>
+        <input type="text" id="username1" name="username1" placeholder="username">
+        <input type="password" id="password1" name="password1" placeholder="password">
+        <button id="signup" onclick="signup()">signup</button>
+        <br>
+        <label for="signin">signin</label>
+        <input type="text" id="username2" name="username2" placeholder="username">
+        <input type="password" id="password2" name="password2" placeholder="password">
+        <button id="signin" onclick="signin()">signin</button>
+        <br>
+        <b>user information</b>
+        <div id="information"></div>
+        <br>
+        <button id="logout" onclick="logout()">logout</button>
+    </body>
+</html>
